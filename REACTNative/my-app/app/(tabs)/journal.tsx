@@ -4,6 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect } from 'react';
 import { journalStorage, JournalEntry } from '@/utils/journalStorage';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function JournalScreen() {
   const [journalEntry, setJournalEntry] = useState('');
@@ -56,8 +57,17 @@ export default function JournalScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.contentContainer}>
+      <ThemedView style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.push('/explore')}
+        >
+          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+        </TouchableOpacity>
         <ThemedText type="title" style={styles.title}>Journal Entry</ThemedText>
+      </ThemedView>
+
+      <ThemedView style={styles.contentContainer}>
         <ThemedText style={styles.subtitle}>Write about your day</ThemedText>
         
         <TextInput
@@ -80,7 +90,7 @@ export default function JournalScreen() {
           {entries.map((entry) => (
             <ThemedView key={entry.id} style={styles.entryContainer}>
               <ThemedText style={styles.entryDate}>
-                {new Date(entry.timestamp).toLocaleDateString()}
+                {entry.formattedTime}
               </ThemedText>
               <ThemedText style={styles.entryContent}>{entry.content}</ThemedText>
               <TouchableOpacity 
@@ -102,6 +112,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a2e',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 10,
+  },
   contentContainer: {
     flex: 1,
     padding: 20,
@@ -109,12 +130,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    textAlign: 'center',
     color: '#e6e6e6',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
-    marginTop: 40,
   },
   subtitle: {
     fontSize: 18,

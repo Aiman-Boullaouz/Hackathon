@@ -4,6 +4,7 @@ export interface JournalEntry {
   id: string;
   content: string;
   timestamp: number;
+  formattedTime: string;
   title?: string;
 }
 
@@ -14,11 +15,20 @@ export const journalStorage = {
   async saveEntry(content: string, title?: string): Promise<JournalEntry> {
     try {
       const entries = await this.getAllEntries();
+      const now = new Date();
       
       const newEntry: JournalEntry = {
         id: Date.now().toString(),
         content,
-        timestamp: Date.now(),
+        timestamp: now.getTime(),
+        formattedTime: now.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }),
         title,
       };
 
@@ -75,10 +85,20 @@ export const journalStorage = {
       
       if (entryIndex === -1) return null;
 
+      const now = new Date();
       const updatedEntry: JournalEntry = {
         ...entries[entryIndex],
         content,
         title,
+        timestamp: now.getTime(),
+        formattedTime: now.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }),
       };
 
       entries[entryIndex] = updatedEntry;
