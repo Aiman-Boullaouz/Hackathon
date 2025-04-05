@@ -25,7 +25,7 @@ async function main() {
     });
 
     // Log the response from AI
-    console.log(response.text);
+    console.log(response.text);    
   } catch (error) {
     console.error("Error generating content:", error);
   }
