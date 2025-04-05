@@ -1,15 +1,14 @@
-
+// Import required packages
 import { GoogleGenAI } from "@google/genai";
 import dotenv from 'dotenv';
 
+// Load environment variables from .env file
+dotenv.config();
 
-let journal_entry = "April 5th, 2025. I am doing my first journal entry. I did not get a lot of sleep last night. It is 11:00 AM. I am feeling pretty good right now."
-
-// Initialize the Google AI client with your API key
+// Initialize the Google AI client with API key from environment variables
 // The API key is used to authenticate your requests to Google's AI services
-
 const ai = new GoogleGenAI({ 
-    apiKey: process.env.GOOGLE_AI_API_KEY 
+  apiKey: process.env.GOOGLE_AI_API_KEY 
 });
 
 // Define an async function to handle the AI interaction
@@ -20,7 +19,7 @@ async function main() {
   // The contents parameter contains the prompt we want to send to the AI
   const response = await ai.models.generateContent({
     model: "gemini-2.0-flash",
-    contents: "Can you give me a paragraph analysis of my journal entry? My journal entry is: " + journal_entry + ". I want the analysis to analyse the emotions and feelings of the person writing the journal entry.",
+    contents: "Explain how AI works",
   });
   
   // Log the response from the AI
