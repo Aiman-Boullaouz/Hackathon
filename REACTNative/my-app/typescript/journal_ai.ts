@@ -3,7 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 
 // Load the API key from the .env file
 config();
-const apiKey = process.env.GOOGLE_AI_API_KEY;
+const apiKey = process.env.GOOGLE_AI_API_KEY;       
 
 if (!apiKey) {
   console.error("API key is not loaded. Please check your .env file.");
