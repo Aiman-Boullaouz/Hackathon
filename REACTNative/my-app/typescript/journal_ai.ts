@@ -118,6 +118,9 @@ generatePoem();
 
 import { GoogleGenAI } from "@google/genai";
 
+
+let journal_entry = "April 5th, 2025. I am doing my first journal entry. I did not get a lot of sleep last night. It is 11:00 AM. I am feeling pretty good right now."
+
 // Initialize the Google AI client with your API key
 // The API key is used to authenticate your requests to Google's AI services
 const ai = new GoogleGenAI({ apiKey: "AIzaSyA7fY93b_Oc7HcclOBJ26ZSRIKrVmWwZCU" });
@@ -130,7 +133,7 @@ async function main() {
   // The contents parameter contains the prompt we want to send to the AI
   const response = await ai.models.generateContent({
     model: "gemini-2.0-flash",
-    contents: "Explain how AI works",
+    contents: "Can you give me a paragraph analysis of my journal entry? My journal entry is: " + journal_entry + ". I want the analysis to analyse the emotions and feelings of the person writing the journal entry.",
   });
   
   // Log the response from the AI
