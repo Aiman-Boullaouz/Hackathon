@@ -17,6 +17,10 @@ export default function TabTwoScreen() {
     router.push('/journal');
   };
 
+  const handleNightlySchedulePress = () => {
+    router.push('/nightly-schedule');
+  };
+
   return (
     <TouchableOpacity 
       style={styles.container} 
@@ -43,6 +47,13 @@ export default function TabTwoScreen() {
           onPress={handleJournalPress}
         >
           <ThemedText style={styles.journalButtonText}>Create a Journal Entry</ThemedText>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.nightlyScheduleButton}
+          onPress={handleNightlySchedulePress}
+        >
+          <ThemedText style={styles.nightlyScheduleButtonText}>Nightly Schedule</ThemedText>
         </TouchableOpacity>
 
         <Collapsible title="Android, iOS, and web support">
@@ -126,6 +137,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   journalButtonText: {
+    color: '#e6e6e6',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  nightlyScheduleButton: {
+    backgroundColor: 'rgba(74, 144, 226, 0.2)',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  nightlyScheduleButtonText: {
     color: '#e6e6e6',
     fontSize: 18,
     fontWeight: 'bold',
