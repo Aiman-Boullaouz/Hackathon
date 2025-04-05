@@ -2,16 +2,47 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useState, useEffect } from 'react';
 
 export default function NightlyScheduleScreen() {
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+  useEffect(() => {
+    // Update time every second
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(timer);
+  }, []);
+
+  // Format the date and time
+  const formattedDate = currentDateTime.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const formattedTime = currentDateTime.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.contentContainer}>
         <ThemedText type="title" style={styles.title}>Nightly Schedule</ThemedText>
         <ThemedText style={styles.subtitle}>Plan your evening routine</ThemedText>
         
+        <ThemedView style={styles.datetimeContainer}>
+          <ThemedText style={styles.dateText}>{formattedDate}</ThemedText>
+          <ThemedText style={styles.timeText}>{formattedTime}</ThemedText>
+        </ThemedView>
+
         {/* Schedule content will go here */}
-        <ThemedText style={styles.comingSoon}>Coming Soon!</ThemedText>
       </ThemedView>
     </ThemedView>
   );
@@ -43,6 +74,23 @@ const styles = StyleSheet.create({
     color: '#b3b3b3',
     fontStyle: 'italic',
     marginBottom: 20,
+  },
+  datetimeContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+    padding: 15,
+    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+    borderRadius: 10,
+  },
+  dateText: {
+    fontSize: 20,
+    color: '#e6e6e6',
+    marginBottom: 5,
+  },
+  timeText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#4a90e2',
   },
   comingSoon: {
     fontSize: 24,
