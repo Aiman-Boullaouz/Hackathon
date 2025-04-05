@@ -1,12 +1,16 @@
 
 import { GoogleGenAI } from "@google/genai";
+import dotenv from 'dotenv';
 
 
 let journal_entry = "April 5th, 2025. I am doing my first journal entry. I did not get a lot of sleep last night. It is 11:00 AM. I am feeling pretty good right now."
 
 // Initialize the Google AI client with your API key
 // The API key is used to authenticate your requests to Google's AI services
-const ai = new GoogleGenAI({ apiKey: "AIzaSyA7fY93b_Oc7HcclOBJ26ZSRIKrVmWwZCU" });
+
+const ai = new GoogleGenAI({ 
+    apiKey: process.env.GOOGLE_AI_API_KEY 
+});
 
 // Define an async function to handle the AI interaction
 // Async/await is used because AI operations are asynchronous (they take time to complete)
