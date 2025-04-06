@@ -5,11 +5,14 @@ import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect } from 'react';
 import { journalStorage, JournalEntry } from '@/utils/journalStorage';
 import { Ionicons } from '@expo/vector-icons';
+import { analyzeJournalEntry } from '@/typescript/journal_ai';
 
 export default function JournalScreen() {
   const [journalEntry, setJournalEntry] = useState('');
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysis, setAnalysis] = useState<string>('');
 
   // Load entries when component mounts
   useEffect(() => {
@@ -31,13 +34,20 @@ export default function JournalScreen() {
   const handleSave = async () => {
     if (journalEntry.trim()) {
       try {
-        await journalStorage.saveEntry(journalEntry);
-        Alert.alert('Success', 'Journal entry saved!');
+        setIsAnalyzing(true);
+        // Get AI analysis
+        const aiAnalysis = await analyzeJournalEntry(journalEntry);
+        
+        // Save the entry with its analysis
+        await journalStorage.saveEntry(journalEntry, undefined, aiAnalysis);
+        Alert.alert('Success', 'Journal entry saved and analyzed!');
         setJournalEntry('');
         loadEntries(); // Reload entries after saving
       } catch (error) {
-        console.error('Error saving entry:', error);
-        Alert.alert('Error', 'Failed to save journal entry');
+        console.error('Error saving/analyzing entry:', error);
+        Alert.alert('Error', 'Failed to save or analyze journal entry');
+      } finally {
+        setIsAnalyzing(false);
       }
     } else {
       Alert.alert('Error', 'Please write something before saving');
@@ -60,7 +70,7 @@ export default function JournalScreen() {
       <ThemedView style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={() => router.push('/explore')}
+          onPress={() => router.back()}
         >
           <Ionicons name="arrow-back" size={24} color="#ffffff" />
         </TouchableOpacity>
@@ -80,19 +90,28 @@ export default function JournalScreen() {
         />
 
         <TouchableOpacity 
-          style={styles.saveButton}
+          style={[styles.saveButton, isAnalyzing && styles.disabledButton]}
           onPress={handleSave}
+          disabled={isAnalyzing}
         >
-          <ThemedText style={styles.saveButtonText}>Save Entry</ThemedText>
+          <ThemedText style={styles.saveButtonText}>
+            {isAnalyzing ? 'Analyzing...' : 'Save Entry'}
+          </ThemedText>
         </TouchableOpacity>
 
         <ScrollView style={styles.entriesContainer}>
           {entries.map((entry) => (
             <ThemedView key={entry.id} style={styles.entryContainer}>
               <ThemedText style={styles.entryDate}>
-                {entry.formattedTime}
+                {new Date(entry.timestamp).toLocaleDateString()}
               </ThemedText>
               <ThemedText style={styles.entryContent}>{entry.content}</ThemedText>
+              {entry.analysis && (
+                <ThemedView style={styles.analysisContainer}>
+                  <ThemedText style={styles.analysisTitle}>AI Analysis</ThemedText>
+                  <ThemedText style={styles.analysisText}>{entry.analysis}</ThemedText>
+                </ThemedView>
+              )}
               <TouchableOpacity 
                 style={styles.deleteButton}
                 onPress={() => handleDelete(entry.id)}
@@ -112,28 +131,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a2e',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 40,
-    paddingHorizontal: 20,
-    paddingBottom: 10,
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 10,
-  },
   contentContainer: {
     flex: 1,
     padding: 20,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  backButton: {
+    padding: 5,
+  },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
+    textAlign: 'center',
     color: '#e6e6e6',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
+    marginTop: 40,
   },
   subtitle: {
     fontSize: 18,
@@ -161,6 +179,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 20,
+  },
+  disabledButton: {
+    backgroundColor: '#3a3a4e',
   },
   saveButtonText: {
     color: '#ffffff',
@@ -198,5 +219,20 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: '#ffffff',
     fontSize: 14,
+  },
+  analysisContainer: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#2a2a2a',
+    borderRadius: 10,
+  },
+  analysisTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  analysisText: {
+    fontSize: 16,
+    lineHeight: 24,
   },
 }); 

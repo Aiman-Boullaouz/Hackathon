@@ -4,32 +4,24 @@ export interface JournalEntry {
   id: string;
   content: string;
   timestamp: number;
-  formattedTime: string;
   title?: string;
+  analysis?: string;
 }
 
 const JOURNAL_STORAGE_KEY = '@journal_entries';
 
 export const journalStorage = {
   // Save a new journal entry
-  async saveEntry(content: string, title?: string): Promise<JournalEntry> {
+  async saveEntry(content: string, title?: string, analysis?: string): Promise<JournalEntry> {
     try {
       const entries = await this.getAllEntries();
-      const now = new Date();
       
       const newEntry: JournalEntry = {
         id: Date.now().toString(),
         content,
-        timestamp: now.getTime(),
-        formattedTime: now.toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true
-        }),
+        timestamp: Date.now(),
         title,
+        analysis
       };
 
       entries.unshift(newEntry); // Add new entry at the beginning
@@ -78,27 +70,18 @@ export const journalStorage = {
   },
 
   // Update an entry
-  async updateEntry(id: string, content: string, title?: string): Promise<JournalEntry | null> {
+  async updateEntry(id: string, content: string, title?: string, analysis?: string): Promise<JournalEntry | null> {
     try {
       const entries = await this.getAllEntries();
       const entryIndex = entries.findIndex(entry => entry.id === id);
       
       if (entryIndex === -1) return null;
 
-      const now = new Date();
       const updatedEntry: JournalEntry = {
         ...entries[entryIndex],
         content,
         title,
-        timestamp: now.getTime(),
-        formattedTime: now.toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true
-        }),
+        analysis
       };
 
       entries[entryIndex] = updatedEntry;
