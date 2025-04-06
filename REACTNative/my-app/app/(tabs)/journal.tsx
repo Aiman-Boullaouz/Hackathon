@@ -11,7 +11,7 @@ export default function JournalScreen() {
   const [journalEntry, setJournalEntry] = useState('');
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);  
   const [analysis, setAnalysis] = useState<string>('');
 
   // Load entries when component mounts
