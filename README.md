@@ -1,2 +1,2 @@
-PillowPath
+# PillowPath
 As college students with busy schedules, we can get stressed out and have trouble taking care of our everyday mental well being. In addition, with our busy schedules, we often have problems when it comes to being organized and staying on top of our sleep schedule. This is what led us to create PillowPath. This project uses personal journal entries and Google Gemini to determine the best course of action to succeed and feel energized in their everyday life.
