@@ -95,7 +95,7 @@ export default function JournalScreen() {
           disabled={isAnalyzing}
         >
           <ThemedText style={styles.saveButtonText}>
-            {isAnalyzing ? 'Analyzing...' : 'Save Entry'}
+            {isAnalyzing ? 'Pluma is analyzing...' : 'Save Entry'}
           </ThemedText>
         </TouchableOpacity>
 
