@@ -149,7 +149,9 @@ const styles = StyleSheet.create({
   backButton: {
     alignSelf: 'flex-start',
     marginBottom: 10,
-    marginLeft: 5,
+    marginLeft: 10,
+    marginTop: 40,
+    padding: 10,
   },
   header: {
     fontSize: 24,
@@ -183,6 +185,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#ffffff',
+    textAlign: 'center',
   },
   reminderList: {
     paddingBottom: 100,

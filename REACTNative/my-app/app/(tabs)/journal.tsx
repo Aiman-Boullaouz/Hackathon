@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a1a2e',
+    paddingTop: 20,
   },
   contentContainer: {
     flex: 1,
@@ -153,6 +154,8 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
     marginTop: 40,
+    flex: 1,
+    marginRight: 10,
   },
   subtitle: {
     fontSize: 18,

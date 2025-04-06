@@ -2,6 +2,7 @@ import { StyleSheet, Platform, TouchableOpacity, ScrollView, SafeAreaView } from
 import { router } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function TabTwoScreen() {
   const handleJournalPress = () => {
@@ -11,6 +12,10 @@ export default function TabTwoScreen() {
   const handleNightlySchedulePress = () => {
     router.push('/nightly-schedule');
   };
+
+  const title_background = 'rgba(255,255,255,0.05)';
+  const button_background = 'rgba(74, 144, 226, 0.2)';
+  const button_border = 'rgba(74, 144, 226, 0.2)';
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -47,6 +52,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
+    backgroundColor: '#1a1a2e',
   },
   scrollView: {
     flex: 1,
@@ -60,6 +66,10 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     marginBottom: 40,
+    padding: 30,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    width: '100%',
   },
   title: {
     fontSize: 32,

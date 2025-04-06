@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
+    padding: 20,
   },
   subtitle: {
     fontSize: 15,
@@ -103,6 +104,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     color: '#b3b3b3', // Muted gray
     fontStyle: 'italic',
+    paddingBottom: 10,
   },
   tapText: {
     fontSize: 18,
