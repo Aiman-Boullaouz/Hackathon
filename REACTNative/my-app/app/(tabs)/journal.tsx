@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
     marginTop: 40,
     flex: 1,
-    marginRight: 10,
+    marginRight: 60,
   },
   subtitle: {
     fontSize: 18,
