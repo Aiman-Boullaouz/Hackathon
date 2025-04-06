@@ -3,7 +3,9 @@ As college students with busy schedules, we can get stressed out and have troubl
 
 # Software Components
 Frameworks: React Native, Expo
+
 Languages: TypeScript, JavaScript
+
 APIs: Gemini APIs, expo APIs
 
 # How It Works
