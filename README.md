@@ -16,7 +16,7 @@ PillowPath takes personal journal entries that are inputted by the user. These e
 - Download the Expo Go App on your iOS device
 - Run 'npm install' in your terminal to install necessary packages
 - Run 'npx expo start' in your terminal
-- Scan the QR code in the terminal to open the server on your mobile device. To run on a web browser, type 'w' in the terminal.
+- Scan the QR code in the terminal to open the server on your mobile device. To run on a web browser, type 'w' in the terminal. Make sure server host and mobile device are on the same WiFi network.
 - Install all the necessary packages needed if errors persist. 
 - To quit the server, press 'ctrl-c'
 
