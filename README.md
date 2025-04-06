@@ -10,7 +10,7 @@ APIs: Gemini APIs, expo APIs
 PillowPath takes personal journal entries that are inputted by the user. These entries are fed into our AI model Pluma the Pillow, which is powered by Google Gemini. Pluma then analyzes the response from the user on how to confront or embrace their feelings while also giving suggestions to create reminders in the future to help set them up for success. Users can create reminders on the app using our calendar feature and also receive notifications throughout the day on their mobile device. This app provides a robust UI experience to help ease the mind while the user chronicles their daily journal.
 
 # Setup
-- Download the source code from this repo
+- Download the source code from the main branch of this repo
 - Download the Expo Go App on your iOS device
 - Run 'npm install' in your terminal to install necessary packages
 - Run 'npx expo start' in your terminal
