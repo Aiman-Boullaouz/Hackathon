@@ -1,103 +1,206 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  StatusBar,
+  Platform,
+  SafeAreaView,
+  FlatList,
+} from 'react-native';
+import { router, useFocusEffect } from 'expo-router';
+import { useState, useEffect, useCallback } from 'react';
+import { Calendar } from 'react-native-calendars';
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+interface Reminder {
+  id: string;
+  time: string;
+  description: string;
+}
+
+const getLocalDateString = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = (`0${date.getMonth() + 1}`).slice(-2);
+  const day = (`0${date.getDate()}`).slice(-2);
+  return `${year}-${month}-${day}`;
+};
 
 export default function NightlyScheduleScreen() {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const todayDateString = getLocalDateString(currentDateTime);
+  const [reminders, setReminders] = useState<Reminder[]>([]);
 
   useEffect(() => {
-    // Update time every second
     const timer = setInterval(() => {
       setCurrentDateTime(new Date());
     }, 1000);
-
-    // Cleanup interval on component unmount
     return () => clearInterval(timer);
   }, []);
 
-  // Format the date and time
-  const formattedDate = currentDateTime.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  useFocusEffect(
+    useCallback(() => {
+      loadRemindersForToday();
+    }, [todayDateString])
+  );
 
-  const formattedTime = currentDateTime.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  });
+  const loadRemindersForToday = async () => {
+    try {
+      const storedReminders = await AsyncStorage.getItem(`reminders-${todayDateString}`);
+      if (storedReminders) {
+        setReminders(JSON.parse(storedReminders));
+      } else {
+        setReminders([]);
+      }
+    } catch (error) {
+      console.error('Error loading reminders:', error);
+    }
+  };
+
+  const handleDayPress = (day: { dateString: string }) => {
+    router.push({
+      pathname: '/reminder',
+      params: { date: day.dateString },
+    });
+  };
+
+  const handleTodayReminderPress = () => {
+    router.push({
+      pathname: '/reminder',
+      params: { date: todayDateString },
+    });
+  };
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.contentContainer}>
-        <ThemedText type="title" style={styles.title}>Nightly Schedule</ThemedText>
-        <ThemedText style={styles.subtitle}>Plan your evening routine</ThemedText>
-        
-        <ThemedView style={styles.datetimeContainer}>
-          <ThemedText style={styles.dateText}>{formattedDate}</ThemedText>
-          <ThemedText style={styles.timeText}>{formattedTime}</ThemedText>
-        </ThemedView>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+        </TouchableOpacity>
 
-        {/* Schedule content will go here */}
-      </ThemedView>
-    </ThemedView>
+        {/* Title */}
+        <Text style={styles.header}>Nightly Schedule</Text>
+
+        {/* Calendar */}
+        <Calendar
+          onDayPress={handleDayPress}
+          markedDates={{
+            [todayDateString]: { selected: true, selectedColor: 'blue' },
+          }}
+          theme={{
+            calendarBackground: '#1a1a2e',
+            textSectionTitleColor: '#ffffff',
+            selectedDayBackgroundColor: '#3498db',
+            selectedDayTextColor: '#ffffff',
+            todayTextColor: '#e74c3c',
+            dayTextColor: '#ffffff',
+            textDisabledColor: '#7f8c8d',
+            arrowColor: '#ffffff',
+            monthTextColor: '#ffffff',
+            indicatorColor: '#ffffff',
+          }}
+        />
+
+        {/* Today Reminder Button */}
+        <TouchableOpacity style={styles.todayButton} onPress={handleTodayReminderPress}>
+          <Text style={styles.todayButtonText}>Set Today's Reminders</Text>
+        </TouchableOpacity>
+
+        {/* Time Display */}
+        <Text style={styles.currentTime}>
+          Current Time: {currentDateTime.toLocaleTimeString()}
+        </Text>
+
+        {/* Reminder List */}
+        <Text style={styles.reminderHeading}>Reminders for Today</Text>
+
+        <FlatList
+          data={reminders}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.reminderList}
+          ListEmptyComponent={
+            <Text style={styles.noReminders}>No reminders for today.</Text>
+          }
+          renderItem={({ item }) => (
+            <View style={styles.reminderItem}>
+              <Text style={styles.reminderText}>
+                {item.time} - {item.description}
+              </Text>
+            </View>
+          )}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#1a1a2e',
-    paddingTop: 20,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 25 : 0,
   },
-  contentContainer: {
+  container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
   },
-  title: {
-    fontSize: 32,
+  backButton: {
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+    marginLeft: 5,
+  },
+  header: {
+    fontSize: 24,
     fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 20,
     textAlign: 'center',
-    color: '#e6e6e6',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    marginTop: 40,
   },
-  subtitle: {
-    fontSize: 18,
+  currentTime: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#ffffff',
     textAlign: 'center',
-    marginTop: 20,
-    color: '#b3b3b3',
-    fontStyle: 'italic',
     marginBottom: 20,
   },
-  datetimeContainer: {
+  todayButton: {
+    backgroundColor: '#4a90e2',
+    padding: 12,
+    borderRadius: 8,
     alignItems: 'center',
-    marginVertical: 20,
-    padding: 15,
-    backgroundColor: 'rgba(74, 144, 226, 0.1)',
-    borderRadius: 10,
+    marginVertical: 10,
   },
-  dateText: {
-    fontSize: 20,
-    color: '#e6e6e6',
-    marginBottom: 5,
-  },
-  timeText: {
-    fontSize: 24,
+  todayButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#4a90e2',
   },
-  comingSoon: {
-    fontSize: 24,
+  reminderHeading: {
+    marginTop: 10,
+    marginBottom: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  reminderList: {
+    paddingBottom: 100,
+  },
+  reminderItem: {
+    backgroundColor: '#2c2c54',
+    padding: 12,
+    borderRadius: 6,
+    marginBottom: 10,
+  },
+  reminderText: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
+  noReminders: {
+    color: '#888',
+    fontSize: 16,
     textAlign: 'center',
-    color: '#4a90e2',
-    marginTop: 40,
-    fontStyle: 'italic',
+    marginTop: 10,
   },
-}); 
+});
