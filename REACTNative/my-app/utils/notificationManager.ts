@@ -37,8 +37,6 @@ export const notificationManager = {
       scheduledTime.setDate(scheduledTime.getDate() + 1);
     }
 
-    // Calculate seconds until first trigger
-    const secondsUntilTrigger = Math.floor((scheduledTime.getTime() - now.getTime()) / 1000);
 
     // Schedule the notification
     const notificationId = await Notifications.scheduleNotificationAsync({
@@ -48,7 +46,10 @@ export const notificationManager = {
         sound: true,
       },
       trigger: {
-        seconds: secondsUntilTrigger,
+        hour: hour,
+        minute: minute,
+        repeats: true,
+        channelId: 'default',
       },
     });
 

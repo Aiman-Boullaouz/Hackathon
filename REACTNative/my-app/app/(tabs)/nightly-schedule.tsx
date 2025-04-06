@@ -1,11 +1,17 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect } from 'react';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { notificationManager } from '@/utils/notificationManager';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function NightlyScheduleScreen() {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [notificationStatus, setNotificationStatus] = useState<string>('');
 
   useEffect(() => {
     // Update time every second
@@ -16,6 +22,22 @@ export default function NightlyScheduleScreen() {
     // Cleanup interval on component unmount
     return () => clearInterval(timer);
   }, []);
+
+  const handleTimeChange = async (event: any, selectedDate?: Date) => {
+    setShowTimePicker(false);
+    if (selectedDate) {
+      setSelectedTime(selectedDate);
+      try {
+        const result = await notificationManager.scheduleJournalReminder(
+          selectedDate.getHours(),
+          selectedDate.getMinutes()
+        );
+        setNotificationStatus(`Notification set for ${result.nextTrigger}`);
+      } catch (error) {
+        setNotificationStatus('Failed to set notification. Please check permissions.');
+      }
+    }
+  };
 
   // Format the date and time
   const formattedDate = currentDateTime.toLocaleDateString('en-US', {
@@ -33,6 +55,14 @@ export default function NightlyScheduleScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <ThemedView style={styles.header}>
+      <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.push('/explore')}
+        >
+          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+        </TouchableOpacity>
+      </ThemedView>
       <ThemedView style={styles.contentContainer}>
         <ThemedText type="title" style={styles.title}>Nightly Schedule</ThemedText>
         <ThemedText style={styles.subtitle}>Plan your evening routine</ThemedText>
@@ -42,7 +72,26 @@ export default function NightlyScheduleScreen() {
           <ThemedText style={styles.timeText}>{formattedTime}</ThemedText>
         </ThemedView>
 
-        {/* Schedule content will go here */}
+        <TouchableOpacity 
+          style={styles.setTimeButton}
+          onPress={() => setShowTimePicker(true)}
+        >
+          <ThemedText style={styles.buttonText}>Set Journal Reminder</ThemedText>
+        </TouchableOpacity>
+
+        {notificationStatus ? (
+          <ThemedText style={styles.statusText}>{notificationStatus}</ThemedText>
+        ) : null}
+
+        {showTimePicker && (
+          <DateTimePicker
+            value={selectedTime}
+            mode="time"
+            is24Hour={false}
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={handleTimeChange}
+          />
+        )}
       </ThemedView>
     </ThemedView>
   );
@@ -52,6 +101,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a1a2e',
+  },
+  header: {
+    padding: 20,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   contentContainer: {
     flex: 1,
@@ -92,11 +150,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#4a90e2',
   },
-  comingSoon: {
-    fontSize: 24,
+  setTimeButton: {
+    backgroundColor: 'rgba(74, 144, 226, 0.2)',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 20,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#e6e6e6',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  statusText: {
     textAlign: 'center',
     color: '#4a90e2',
-    marginTop: 40,
-    fontStyle: 'italic',
+    marginTop: 10,
+    fontSize: 16,
   },
 }); 
